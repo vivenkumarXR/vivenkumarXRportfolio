@@ -38,7 +38,7 @@ export const experiences = [
   {
     title: "XR Solution Architect",
     company_name: "EDAG Group",
-    date: "2024 — Present",
+    date: "April 2026 — Present",
     points: [
       "Architecting XR and digital-twin solutions for engineering and industrial use cases.",
       "Bridging Physical AI, edge computing, and immersive tech into production-grade ecosystems.",
@@ -47,7 +47,7 @@ export const experiences = [
   {
     title: "XR Solution Architect",
     company_name: "Tech Mahindra",
-    date: "April 2022 — 2024",
+    date: "April 2022 — March 2026",
     points: [
       "Led enterprise XR solution design and delivery for global clients.",
       "Drove the Oman XR trainer program and customer interaction initiatives.",
