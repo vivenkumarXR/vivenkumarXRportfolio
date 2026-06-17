@@ -1,0 +1,37 @@
+{
+  "name": "Vivek Kumar Yadav — XR Solution Architect",
+  "short_name": "VivekXR",
+  "description": "XR Solution Architect building Intelligent Digital Ecosystems with Physical AI, Digital Twin, and IoT.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050816",
+  "theme_color": "#804dee",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["portfolio", "technology", "education"],
+  "lang": "en",
+  "shortcuts": [
+    {
+      "name": "Projects",
+      "url": "/#projects",
+      "description": "View XR & AI projects"
+    },
+    {
+      "name": "Speaking",
+      "url": "/#speaking",
+      "description": "Book Vivek for an event"
+    },
+    {
+      "name": "Contact",
+      "url": "/#contact",
+      "description": "Get in touch"
+    }
+  ]
+}

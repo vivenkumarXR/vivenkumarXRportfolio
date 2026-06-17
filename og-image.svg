@@ -1,0 +1,96 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#050816"/>
+      <stop offset="100%" style="stop-color:#151030"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#804dee"/>
+      <stop offset="100%" style="stop-color:#00d9f5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#804dee;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#050816;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Glow -->
+  <ellipse cx="600" cy="315" rx="500" ry="300" fill="url(#glow)"/>
+
+  <!-- Grid lines -->
+  <g stroke="#804dee" stroke-width="0.5" opacity="0.08">
+    <line x1="0" y1="105" x2="1200" y2="105"/>
+    <line x1="0" y1="210" x2="1200" y2="210"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="400" y1="0" x2="400" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="800" y1="0" x2="800" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+
+  <!-- Accent bar -->
+  <rect x="80" y="160" width="6" height="120" rx="3" fill="url(#accent)"/>
+
+  <!-- Name -->
+  <text x="110" y="205" font-family="'Poppins', system-ui, sans-serif" font-size="56" font-weight="900" fill="white">Vivek Kumar Yadav</text>
+
+  <!-- Title gradient text (approximated with a rect mask) -->
+  <text x="110" y="260" font-family="'Poppins', system-ui, sans-serif" font-size="26" font-weight="600" fill="#804dee">XR Solution Architect · Physical AI Builder</text>
+
+  <!-- Tagline -->
+  <text x="110" y="310" font-family="'Poppins', system-ui, sans-serif" font-size="21" font-weight="300" fill="#aaa6c3">I don't just build XR — I build Intelligent Digital Ecosystems.</text>
+
+  <!-- Divider -->
+  <rect x="80" y="340" width="1040" height="1" fill="#804dee" opacity="0.3"/>
+
+  <!-- Tags row -->
+  <g font-family="'Poppins', system-ui, sans-serif" font-size="14" font-weight="500">
+    <!-- Tag pill helper: rect + text -->
+    <rect x="80" y="360" width="60" height="28" rx="14" fill="#804dee" opacity="0.2"/>
+    <text x="110" y="379" text-anchor="middle" fill="#804dee">XR</text>
+
+    <rect x="152" y="360" width="100" height="28" rx="14" fill="#804dee" opacity="0.2"/>
+    <text x="202" y="379" text-anchor="middle" fill="#804dee">Physical AI</text>
+
+    <rect x="264" y="360" width="118" height="28" rx="14" fill="#804dee" opacity="0.2"/>
+    <text x="323" y="379" text-anchor="middle" fill="#804dee">Digital Twin</text>
+
+    <rect x="394" y="360" width="85" height="28" rx="14" fill="#00d9f5" opacity="0.15"/>
+    <text x="437" y="379" text-anchor="middle" fill="#00d9f5">Unity</text>
+
+    <rect x="491" y="360" width="80" height="28" rx="14" fill="#00d9f5" opacity="0.15"/>
+    <text x="531" y="379" text-anchor="middle" fill="#00d9f5">WebXR</text>
+
+    <rect x="583" y="360" width="52" height="28" rx="14" fill="#00d9f5" opacity="0.15"/>
+    <text x="609" y="379" text-anchor="middle" fill="#00d9f5">IoT</text>
+  </g>
+
+  <!-- Stats -->
+  <g font-family="'Poppins', system-ui, sans-serif">
+    <text x="80" y="450" font-size="38" font-weight="900" fill="url(#accent)">7+</text>
+    <text x="80" y="474" font-size="13" fill="#aaa6c3">Years in XR</text>
+
+    <text x="220" y="450" font-size="38" font-weight="900" fill="url(#accent)">1000+</text>
+    <text x="220" y="474" font-size="13" fill="#aaa6c3">Students Mentored</text>
+
+    <text x="420" y="450" font-size="38" font-weight="900" fill="url(#accent)">3</text>
+    <text x="420" y="474" font-size="13" fill="#aaa6c3">Enterprise Employers</text>
+
+    <text x="620" y="450" font-size="38" font-weight="900" fill="url(#accent)">6</text>
+    <text x="620" y="474" font-size="13" fill="#aaa6c3">Certifications</text>
+  </g>
+
+  <!-- Domain -->
+  <text x="1120" y="590" font-family="'Poppins', system-ui, sans-serif" font-size="16" fill="#aaa6c3" text-anchor="end">vivenkumarxr.com</text>
+
+  <!-- Orb decorations (right side) -->
+  <circle cx="980" cy="200" r="80" fill="#804dee" opacity="0.06"/>
+  <circle cx="1080" cy="350" r="120" fill="#00d9f5" opacity="0.04"/>
+  <circle cx="950" cy="430" r="50" fill="#f272c8" opacity="0.08"/>
+</svg>
