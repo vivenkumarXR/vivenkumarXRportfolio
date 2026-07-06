@@ -4,8 +4,8 @@
   "description": "XR Solution Architect building Intelligent Digital Ecosystems with Physical AI, Digital Twin, and IoT.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#050816",
-  "theme_color": "#804dee",
+  "background_color": "#050505",
+  "theme_color": "#ccff00",
   "orientation": "any",
   "icons": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "name": "Speaking",
-      "url": "/#speaking",
+      "url": "/#voice",
       "description": "Book Vivek for an event"
     },
     {
