@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Let's Learn Morse Code: Blackout, a 21-day Morse code thriller</title>
+    <meta name="description" content="A free 21-day Morse code course told as a thriller. The city goes dark, Grandpa's radio beeps SOS, and only you can read it. About 15 minutes a day, for kids and grown-ups." />
+    <meta name="author" content="Vivek Kumar Yadav (vivenkumarXR)" />
+    <link rel="canonical" href="https://vivenkumarxr.com/letslearnmorse/" />
+    <meta name="theme-color" content="#0b1024" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vivenkumarxr.com/letslearnmorse/" />
+    <meta property="og:site_name" content="vivenkumarXR" />
+    <meta property="og:title" content="Blackout: learn Morse code in 21 days" />
+    <meta property="og:description" content="The city goes dark. Grandpa's radio beeps SOS. Only you can read it. A free Morse code course told as a thriller, for kids and grown-ups." />
+    <meta property="og:image" content="https://vivenkumarxr.com/letslearnmorse/assets/img/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Blackout: a dark city skyline with one lit window and the title in Morse code." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@vivenkumarXR" />
+    <meta name="twitter:creator" content="@vivenkumarXR" />
+    <meta name="twitter:title" content="Blackout: learn Morse code in 21 days" />
+    <meta name="twitter:description" content="The city goes dark. Grandpa's radio beeps SOS. Only you can read it. A free Morse code thriller for kids and grown-ups." />
+    <meta name="twitter:image" content="https://vivenkumarxr.com/letslearnmorse/assets/img/og.png" />
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+    <link rel="preload" href="assets/fonts/big-shoulders-display-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <script type="module" src="assets/js/app.js"></script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Let's Learn Morse Code: Blackout",
+        "description": "A free 21-day Morse code course told as a thriller story. Learn every letter by sound, about 15 minutes a day.",
+        "url": "https://vivenkumarxr.com/letslearnmorse/",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "educationalLevel": "Beginner",
+        "teaches": "Morse code",
+        "provider": {
+          "@type": "Person",
+          "name": "Vivek Kumar Yadav",
+          "alternateName": "vivenkumarXR",
+          "url": "https://vivenkumarxr.com/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to the course</a>
+
+    <header class="topbar" id="topbar">
+      <a class="brand" href="./" aria-label="Let's Learn Morse Code, home">
+        <span class="brand-lamp" aria-hidden="true"></span>
+        <span>Let's Learn Morse Code</span>
+      </a>
+      <div class="topbar-tools">
+        <span class="agent" id="agent" hidden></span>
+        <button class="icon-btn" type="button" data-sound-toggle aria-label="Sound on. Turn sound off" aria-pressed="true"></button>
+        <button class="icon-btn" type="button" data-open-settings aria-label="Settings">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="title">
+        <div class="sky" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <h1 id="title" class="wordmark"><span class="visually-hidden">Let's Learn Morse Code: </span>Blackout</h1>
+            <p class="wordmark-code" id="wordmark-code" aria-hidden="true"></p>
+            <p class="subtitle">A Morse code thriller in 21 days</p>
+            <p class="lede">The whole city has gone dark. Phones are dead. The internet is gone. Only Grandpa's old radio still works, and it's beeping a message nobody can read.</p>
+            <p class="lede lede-quiet">Learn Morse code one letter at a time and find out who is sending it. Free, for kids and grown-ups.</p>
+            <div class="cta-row">
+              <button class="btn btn-primary btn-big" id="cta" type="button" data-day="1">Start Day 1</button>
+              <p class="cta-note" id="cta-note">About 15 minutes. Turn your sound on.</p>
+            </div>
+            <p class="progress-line" id="progress-line" hidden></p>
+          </div>
+          <div class="city-map" id="city-map" role="region" aria-label="Course map: 21 days in three buildings"></div>
+        </div>
+      </section>
+
+      <section class="codebook-wrap" aria-labelledby="codebook-title">
+        <div class="codebook">
+          <h2 id="codebook-title">Grandpa's codebook</h2>
+          <p class="note" id="codebook-count">Every letter you learn gets written in here.</p>
+          <ol class="codebook-grid" id="codebook-grid"></ol>
+        </div>
+      </section>
+
+      <section class="how" aria-labelledby="how-title">
+        <h2 id="how-title">How it works</h2>
+        <div class="how-grid">
+          <div class="how-item">
+            <h3>Listen first</h3>
+            <p>You learn each letter by its sound, the way real radio operators do. There's no chart to memorise.</p>
+          </div>
+          <div class="how-item">
+            <h3>Fifteen minutes a day</h3>
+            <p>Each day brings new letters, a few quick games and the next part of the story.</p>
+          </div>
+          <div class="how-item">
+            <h3>Switch the city back on</h3>
+            <p>Every day you finish lights a window. Earn up to three stars a day and keep your streak going.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>Made by <a href="https://vivenkumarxr.com/">vivenkumarXR</a></p>
+        <p>Your progress is saved in this browser only.</p>
+      </footer>
+    </main>
+
+    <section class="lesson" id="lesson" hidden></section>
+
+    <dialog class="settings" id="settings" aria-labelledby="settings-title">
+      <form method="dialog">
+        <h2 id="settings-title">Settings</h2>
+        <div class="setting">
+          <label for="set-sound">Sound</label>
+          <input class="switch" type="checkbox" id="set-sound" />
+        </div>
+        <fieldset class="setting setting-col">
+          <legend>Signal speed</legend>
+          <div class="seg">
+            <input type="radio" name="speed" id="sp-relaxed" value="relaxed" /><label for="sp-relaxed">Relaxed</label>
+            <input type="radio" name="speed" id="sp-normal" value="normal" /><label for="sp-normal">Normal</label>
+            <input type="radio" name="speed" id="sp-fast" value="fast" /><label for="sp-fast">Fast</label>
+          </div>
+        </fieldset>
+        <div class="setting">
+          <label for="set-lamp">Flash the lamp with every beep<small>Helps if you can't hear well. Listening games get easier.</small></label>
+          <input class="switch" type="checkbox" id="set-lamp" />
+        </div>
+        <div class="setting">
+          <div>
+            <p>Start over</p>
+            <small>Deletes your stars, points, streak and codename on this device.</small>
+          </div>
+          <button class="btn btn-ghost btn-small" type="button" id="reset-btn">Reset</button>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-primary" value="close">Done</button>
+        </div>
+      </form>
+    </dialog>
+
+    <noscript>
+      <p class="noscript">This course needs JavaScript turned on to play the radio signals.</p>
+    </noscript>
+  </body>
+</html>
