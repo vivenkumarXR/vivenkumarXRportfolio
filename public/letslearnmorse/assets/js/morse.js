@@ -1,7 +1,7 @@
 // Let's Learn Morse Code: Blackout
 // Morse table, timing, sound and the telegraph key.
 // Timing follows the PARIS standard; "Farnsworth" spacing keeps each
-// letter at full speed but stretches the gaps so beginners have time to think.
+// character at full speed but stretches the gaps so beginners have time to think.
 
 export const MORSE = {
   A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.", G: "--.", H: "....",
@@ -10,8 +10,37 @@ export const MORSE = {
   Y: "-.--", Z: "--..",
   1: ".----", 2: "..---", 3: "...--", 4: "....-", 5: ".....",
   6: "-....", 7: "--...", 8: "---..", 9: "----.", 0: "-----",
-  ".": ".-.-.-", ",": "--..--", "?": "..--..", "/": "-..-.", "=": "-...-",
+  ".": ".-.-.-", ",": "--..--", "?": "..--..", "/": "-..-.",
+  // Prosigns: two letters sent as one, with no gap between them.
+  "<AR>": ".-.-.", "<BT>": "-...-", "<SK>": "...-.-", "<KN>": "-.--.",
 };
+
+export const LETTERS = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+export const DIGITS = [..."1234567890"];
+export const PUNCT = [".", ",", "?", "/"];
+export const PROSIGNS = ["<AR>", "<BT>", "<SK>"];
+
+export const isProsign = (tok) => tok.length > 1 && tok[0] === "<";
+// What a symbol looks like on screen: "<AR>" shows as "AR".
+export const label = (tok) => (isProsign(tok) ? tok.slice(1, -1) : tok);
+
+// "SEE EAST <AR>" -> [["S","E","E"], ["E","A","S","T"], ["<AR>"]]
+export function tokenize(text) {
+  const words = [];
+  for (const raw of String(text).toUpperCase().trim().split(/\s+/)) {
+    if (!raw) continue;
+    const toks = (raw.match(/<[A-Z]{2}>|./g) || []).filter((t) => MORSE[t]);
+    if (toks.length) words.push(toks);
+  }
+  return words;
+}
+
+// The symbols someone has to type for an answer (prosigns are never typed).
+export function typedSymbols(text) {
+  return tokenize(text)
+    .flat()
+    .filter((t) => !isProsign(t));
+}
 
 // "..." -> "di-di-dit", "---" -> "dah-dah-dah"
 export function vocalize(code) {
@@ -21,7 +50,7 @@ export function vocalize(code) {
 }
 
 // All durations in seconds.
-export function timing(charWpm = 15, effWpm = charWpm) {
+export function timing(charWpm = 15, effWpm = charWpm, dahRatio = 3) {
   const dit = 1.2 / charWpm;
   let charGap = 3 * dit;
   let wordGap = 7 * dit;
@@ -30,7 +59,7 @@ export function timing(charWpm = 15, effWpm = charWpm) {
     charGap = (3 * extra) / 19;
     wordGap = (7 * extra) / 19;
   }
-  return { dit, dah: 3 * dit, elGap: dit, charGap, wordGap };
+  return { dit, dah: dahRatio * dit, elGap: dit, charGap, wordGap };
 }
 
 // Turn text into a timeline of beeps.
@@ -38,11 +67,10 @@ export function buildSchedule(text, t) {
   const elements = [];
   const chars = [];
   let time = 0;
-  const words = String(text).toUpperCase().trim().split(/\s+/).filter(Boolean);
+  const words = tokenize(text);
   words.forEach((word, wi) => {
-    const letters = [...word].filter((ch) => MORSE[ch]);
-    letters.forEach((ch, ci) => {
-      const code = MORSE[ch];
+    word.forEach((tok, ci) => {
+      const code = MORSE[tok];
       const start = time;
       [...code].forEach((sym, si) => {
         const d = sym === "." ? t.dit : t.dah;
@@ -50,8 +78,8 @@ export function buildSchedule(text, t) {
         time += d;
         if (si < code.length - 1) time += t.elGap;
       });
-      chars.push({ ch, start, end: time });
-      if (ci < letters.length - 1) time += t.charGap;
+      chars.push({ ch: tok, start, end: time, word: wi });
+      if (ci < word.length - 1) time += t.charGap;
     });
     if (wi < words.length - 1) time += t.wordGap;
   });
@@ -107,7 +135,7 @@ class Sound {
     return this.enabled && !!this.ctx && this.ctx.state === "running";
   }
 
-  beeps(elements, { at, freq = 600, wave = "sine", gain = 0.5 }) {
+  beeps(elements, { at, freq = 600, wave = "sine", gain = 0.5, vibrato = 0 }) {
     const ctx = this.ctx;
     const osc = ctx.createOscillator();
     const env = ctx.createGain();
@@ -115,6 +143,16 @@ class Sound {
     osc.frequency.value = freq;
     env.gain.value = 0;
     osc.connect(env);
+    let lfo = null;
+    if (vibrato) {
+      // A wobble in pitch makes the tone sound like a whistle.
+      lfo = ctx.createOscillator();
+      const depth = ctx.createGain();
+      lfo.frequency.value = vibrato;
+      depth.gain.value = freq * 0.018;
+      lfo.connect(depth).connect(osc.frequency);
+      lfo.start(at);
+    }
     let tail = env;
     if (wave !== "sine") {
       const lp = ctx.createBiquadFilter();
@@ -137,6 +175,7 @@ class Sound {
     }
     osc.start(at);
     osc.stop(end + 0.05);
+    if (lfo) lfo.stop(end + 0.05);
     const handle = {
       stop: () => {
         try {
@@ -144,6 +183,7 @@ class Sound {
           env.gain.cancelScheduledValues(now);
           env.gain.setTargetAtTime(0, now, 0.004);
           osc.stop(now + 0.03);
+          if (lfo) lfo.stop(now + 0.03);
         } catch {}
         this.active.delete(handle);
       },
@@ -155,6 +195,7 @@ class Sound {
         osc.disconnect();
         env.disconnect();
         tail.disconnect();
+        if (lfo) lfo.disconnect();
       } catch {}
     };
     return handle;
@@ -191,9 +232,10 @@ class Sound {
     };
   }
 
-  // Radio crackle in the background of story scenes.
+  // Radio crackle. A higher level is the villain's jamming.
   startStatic(level = 0.02) {
-    if (!this.ctx || this.hiss) return;
+    if (!this.ctx) return;
+    if (this.hiss) return this.setStatic(level);
     const ctx = this.ctx;
     const len = ctx.sampleRate * 2;
     const buf = ctx.createBuffer(1, len, ctx.sampleRate);
@@ -217,6 +259,13 @@ class Sound {
     this.hiss = { src, g };
   }
 
+  setStatic(level, smooth = 0.2) {
+    if (!this.hiss) return this.startStatic(level);
+    const t = this.ctx.currentTime;
+    this.hiss.g.gain.cancelScheduledValues(t);
+    this.hiss.g.gain.setTargetAtTime(level, t, smooth);
+  }
+
   stopStatic() {
     const n = this.hiss;
     if (!n) return;
@@ -227,6 +276,39 @@ class Sound {
       n.g.gain.setTargetAtTime(0, t, 0.12);
       n.src.stop(t + 0.7);
     } catch {}
+  }
+
+  // A loud burst of jamming noise, then back to a quiet crackle.
+  jam(seconds = 1.4) {
+    if (!this.canPlay()) return;
+    this.startStatic(0.02);
+    const g = this.hiss.g.gain;
+    const t = this.ctx.currentTime;
+    g.cancelScheduledValues(t);
+    g.setTargetAtTime(0.32, t, 0.05);
+    g.setTargetAtTime(0.02, t + seconds, 0.25);
+  }
+
+  // Short filtered noise bursts: knocking on a wooden door, or fingers drumming.
+  knock(times = 3, gap = 0.26, gain = 0.5) {
+    if (!this.canPlay()) return;
+    const ctx = this.ctx;
+    const t0 = ctx.currentTime + 0.02;
+    for (let i = 0; i < times; i++) {
+      const len = Math.floor(ctx.sampleRate * 0.09);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / len, 6);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 520;
+      const g = ctx.createGain();
+      g.gain.value = gain * 2.2;
+      src.connect(lp).connect(g).connect(this.out);
+      src.start(t0 + i * gap);
+    }
   }
 
   blip(notes, { wave = "sine", gain = 0.16, step = 0.09, dur = 0.14 } = {}) {
@@ -260,6 +342,10 @@ class Sound {
     this.blip([523.25, 659.25, 783.99, 1046.5], { step: 0.11, dur: 0.32, gain: 0.15 });
   }
 
+  click() {
+    this.blip([1800, 900], { wave: "square", gain: 0.05, step: 0.03, dur: 0.04 });
+  }
+
   stopAll() {
     for (const h of [...this.active]) h.stop();
     this.active.clear();
@@ -271,15 +357,28 @@ export const sound = new Sound();
 
 // Play text as Morse. Sound (when on) and visuals stay in sync because both
 // read the same clock. Returns { done, stop, duration }.
+// silent: true is for light signals, which make no sound.
 export function transmit(text, opts = {}) {
-  const { charWpm = 15, effWpm = 8, freq = 600, wave = "sine", gain = 0.5, onElement, onChar, signal } = opts;
-  const sched = buildSchedule(text, timing(charWpm, effWpm));
+  const {
+    charWpm = 15,
+    effWpm = 8,
+    dahRatio = 3,
+    freq = 600,
+    wave = "sine",
+    gain = 0.5,
+    vibrato = 0,
+    silent = false,
+    onElement,
+    onChar,
+    signal,
+  } = opts;
+  const sched = buildSchedule(text, timing(charWpm, Math.min(effWpm, charWpm), dahRatio));
   const lead = 0.06;
   let handle = null;
   let clock;
-  if (sound.canPlay()) {
+  if (!silent && sound.canPlay()) {
     const at = sound.ctx.currentTime + lead;
-    handle = sound.beeps(sched.elements, { at, freq, wave, gain });
+    handle = sound.beeps(sched.elements, { at, freq, wave, gain, vibrato });
     clock = () => sound.ctx.currentTime - at;
   } else {
     const start = performance.now() + lead * 1000;
@@ -346,8 +445,9 @@ export function transmit(text, opts = {}) {
 
 // The telegraph key: press() and release() measure how long it was held.
 export class Keyer {
-  constructor({ freq = 600, onDown, onUp } = {}) {
+  constructor({ freq = 600, silent = false, onDown, onUp } = {}) {
     this.freq = freq;
+    this.silent = silent;
     this.onDown = onDown;
     this.onUp = onUp;
     this.isDown = false;
@@ -359,7 +459,7 @@ export class Keyer {
     if (this.isDown) return;
     this.isDown = true;
     this.t0 = performance.now();
-    if (!this.tone && sound.ready) this.tone = sound.keyTone(this.freq);
+    if (!this.silent && !this.tone && sound.ready) this.tone = sound.keyTone(this.freq);
     if (this.tone) this.tone.on();
     if (this.onDown) this.onDown();
   }

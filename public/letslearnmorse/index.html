@@ -29,15 +29,15 @@
     <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
     <link rel="preload" href="assets/fonts/big-shoulders-display-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="assets/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="assets/css/main.css" />
-    <script type="module" src="assets/js/app.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css?v=21" />
+    <script type="module" src="assets/js/app.js?v=21"></script>
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Course",
         "name": "Let's Learn Morse Code: Blackout",
-        "description": "A free 21-day Morse code course told as a thriller story. Learn every letter by sound, about 15 minutes a day.",
+        "description": "A free 21-day Morse code course told as a thriller story. Learn every letter, number and radio signal by sound, about 15 minutes a day.",
         "url": "https://vivenkumarxr.com/letslearnmorse/",
         "inLanguage": "en",
         "isAccessibleForFree": true,
@@ -93,8 +93,18 @@
         <div class="codebook">
           <h2 id="codebook-title">Grandpa's codebook</h2>
           <p class="note" id="codebook-count">Every letter you learn gets written in here.</p>
-          <ol class="codebook-grid" id="codebook-grid"></ol>
+          <ol class="codebook-grid" id="codebook-grid" aria-label="Letters"></ol>
+          <h3 class="cb-group">Numbers</h3>
+          <ol class="codebook-grid" id="codebook-digits" aria-label="Numbers"></ol>
+          <h3 class="cb-group">Punctuation and radio rules</h3>
+          <ol class="codebook-grid" id="codebook-extra" aria-label="Punctuation and radio rules"></ol>
         </div>
+      </section>
+
+      <section class="leaderboard" id="leaderboard" aria-labelledby="lb-title" hidden>
+        <h2 id="lb-title">Top radio operators</h2>
+        <ol class="lb-list" id="lb-list"></ol>
+        <p class="note" id="lb-note" aria-live="polite"></p>
       </section>
 
       <section class="how" aria-labelledby="how-title">
@@ -106,18 +116,18 @@
           </div>
           <div class="how-item">
             <h3>Fifteen minutes a day</h3>
-            <p>Each day brings new letters, a few quick games and the next part of the story.</p>
+            <p>Each day brings new letters, a few quick games and the next part of the story. Stop halfway and you can carry on later.</p>
           </div>
           <div class="how-item">
             <h3>Switch the city back on</h3>
-            <p>Every day you finish lights a window. Earn up to three stars a day and keep your streak going.</p>
+            <p>Every day you finish lights a window. Earn up to three stars a day, keep your streak going and get a certificate at the end.</p>
           </div>
         </div>
       </section>
 
       <footer class="site-footer">
         <p>Made by <a href="https://vivenkumarxr.com/">vivenkumarXR</a></p>
-        <p>Your progress is saved in this browser only.</p>
+        <p id="saved-note">Your progress is saved in this browser.</p>
       </footer>
     </main>
 
@@ -141,6 +151,17 @@
         <div class="setting">
           <label for="set-lamp">Flash the lamp with every beep<small>Helps if you can't hear well. Listening games get easier.</small></label>
           <input class="switch" type="checkbox" id="set-lamp" />
+        </div>
+        <div class="setting setting-col" id="cloud-setting" hidden>
+          <p>Your save code</p>
+          <small>Use it to carry on with your progress on another device. Keep it secret, like a password.</small>
+          <div class="code-row"><code id="save-code"></code><button class="btn btn-ghost btn-small" type="button" id="copy-code">Copy</button></div>
+          <label for="load-code">Carry on from another device</label>
+          <div class="code-row">
+            <input id="load-code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD-EFGH-JKMN" maxlength="16" />
+            <button class="btn btn-ghost btn-small" type="button" id="load-btn">Load</button>
+          </div>
+          <p class="cloud-msg" id="cloud-msg" aria-live="polite"></p>
         </div>
         <div class="setting">
           <div>
