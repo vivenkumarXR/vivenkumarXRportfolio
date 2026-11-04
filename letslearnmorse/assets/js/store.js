@@ -1,7 +1,6 @@
 // Let's Learn Morse Code: Blackout
-// Progress is kept in this browser only (localStorage). No accounts, no tracking.
-// The shape is ready for a nickname leaderboard later: a random player id,
-// a codename and the best score per day.
+// Progress lives in this browser (localStorage). When online saving is switched on
+// (see config.js), cloud.js copies it to the database too.
 
 const KEY = "llmc.v1";
 
@@ -10,6 +9,37 @@ const SPEEDS = {
   normal: { charWpm: 15, effWpm: 8 },
   fast: { charWpm: 20, effWpm: 12 },
 };
+
+// Codenames are always made from these words, so the public leaderboard can
+// never show a child's real name. The database checks the same lists.
+export const NAME_A = ["Midnight", "Silent", "Swift", "Lucky", "Brave", "Clever", "Hidden", "Electric", "Shadow", "Secret", "Golden", "Cosmic", "Rapid", "Mighty", "Sneaky", "Starry"];
+export const NAME_B = ["Owl", "Comet", "Falcon", "Fox", "Spark", "Echo", "Panther", "Rocket", "Badger", "Lantern", "Tiger", "Otter", "Raven", "Gecko", "Wolf", "Dolphin"];
+
+const rand = (n) => {
+  try {
+    const a = new Uint32Array(1);
+    crypto.getRandomValues(a);
+    return a[0] % n;
+  } catch {
+    return Math.floor(Math.random() * n);
+  }
+};
+
+export const randomName = () => `${NAME_A[rand(NAME_A.length)]} ${NAME_B[rand(NAME_B.length)]}`;
+
+export function isSafeName(name) {
+  const [a, b, ...rest] = String(name || "").split(" ");
+  return rest.length === 0 && NAME_A.includes(a) && NAME_B.includes(b);
+}
+
+const CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+export function makeSaveCode() {
+  let s = "";
+  for (let i = 0; i < 12; i++) s += CODE_CHARS[rand(CODE_CHARS.length)];
+  return s;
+}
+export const formatCode = (c) => (c || "").replace(/(.{4})(?=.)/g, "$1-");
+export const cleanCode = (c) => String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
 function makeId() {
   try {
@@ -21,12 +51,17 @@ function makeId() {
 
 function fresh() {
   return {
-    v: 1,
+    v: 2,
     id: makeId(),
     codename: "",
+    tag: 10 + rand(90),
+    alias: "",
+    saveCode: makeSaveCode(),
     days: {},
     streak: { count: 0, last: null },
+    checkpoint: null,
     settings: { sound: true, speed: "normal", lamp: false },
+    cloud: { pending: false, last: null },
   };
 }
 
@@ -37,13 +72,18 @@ export function load() {
     saved = JSON.parse(localStorage.getItem(KEY) || "null");
   } catch {}
   if (!saved || typeof saved !== "object") return base;
-  return {
+  const state = {
     ...base,
     ...saved,
+    v: 2,
     streak: { ...base.streak, ...(saved.streak || {}) },
     settings: { ...base.settings, ...(saved.settings || {}) },
+    cloud: { ...base.cloud, ...(saved.cloud || {}) },
     days: saved.days && typeof saved.days === "object" ? saved.days : {},
   };
+  if (!/^[A-Z2-9]{12}$/.test(state.saveCode || "")) state.saveCode = base.saveCode;
+  if (!(state.tag >= 10 && state.tag <= 99)) state.tag = base.tag;
+  return state;
 }
 
 export function save(state) {
@@ -65,6 +105,13 @@ export function speed(state) {
   return SPEEDS[state.settings.speed] || SPEEDS.normal;
 }
 
+// The name shown on the public leaderboard.
+export function publicName(state) {
+  if (isSafeName(state.codename)) return `${state.codename} ${state.tag}`;
+  if (!isSafeName(state.alias)) state.alias = randomName();
+  return `${state.alias} ${state.tag}`;
+}
+
 export function dateKey(d = new Date()) {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
@@ -77,11 +124,26 @@ function yesterdayKey() {
   return dateKey(d);
 }
 
+export const isDone = (state, n) => !!(state.days[n] && state.days[n].done);
+
+// Days open one after another: finish a day to open the next.
+export const isOpen = (state, n) => n === 1 || isDone(state, n - 1);
+
 // A streak survives until the end of the day after you last played.
 export function currentStreak(state) {
   const { count, last } = state.streak;
   if (!last) return 0;
   return last === dateKey() || last === yesterdayKey() ? count : 0;
+}
+
+export function setCheckpoint(state, cp) {
+  state.checkpoint = cp;
+  save(state);
+}
+
+export function clearCheckpoint(state) {
+  state.checkpoint = null;
+  save(state);
 }
 
 export function completeDay(state, n, { points, stars, accuracy }) {
@@ -100,6 +162,8 @@ export function completeDay(state, n, { points, stars, accuracy }) {
   if (last !== today) {
     state.streak = { count: last === yesterdayKey() ? count + 1 : 1, last: today };
   }
+  state.checkpoint = null;
+  state.cloud.pending = true;
   save(state);
   return { first, newBest: points > (prev?.best || 0), moreStars: stars > (prev?.stars || 0) };
 }
@@ -115,4 +179,24 @@ export function totals(state) {
     done++;
   }
   return { points, stars, done };
+}
+
+// Progress from another device (loaded with a save code): keep the best of both.
+export function mergeDays(state, days) {
+  if (!days || typeof days !== "object") return 0;
+  let added = 0;
+  for (const [n, d] of Object.entries(days)) {
+    if (!d || !d.done || !(Number(n) >= 1 && Number(n) <= 21)) continue;
+    const mine = state.days[n];
+    if (!mine || !mine.done) added++;
+    state.days[n] = {
+      done: true,
+      stars: Math.max(Number(d.stars) || 0, mine?.stars || 0),
+      best: Math.max(Number(d.best) || 0, mine?.best || 0),
+      accuracy: Math.max(Number(d.accuracy) || 0, mine?.accuracy || 0),
+      plays: Math.max(Number(d.plays) || 1, mine?.plays || 0),
+      last: mine?.last || d.last || null,
+    };
+  }
+  return added;
 }
